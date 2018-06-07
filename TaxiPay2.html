@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<script>
+    var fares = {"Randburg":12, "Sandton": 15, "Jeppe": 7.50 };
+
+    function destinationSelected()
+    {
+        var dest = document.getElementById("destination").value;
+
+        if (dest == "Nowhere")
+        {
+            reset();
+            return;
+        }
+
+        document.getElementById("taxiFare").innerHTML = "A taxi to " + dest + " = R" + fares[dest]+'<br/><br/>';
+        populatePassengers();
+        document.getElementById("taxiFare").style.display = "block";
+    }
+
+    function passengersSelected()
+    {
+        document.getElementById("cashTenderedDiv").innerHTML = "<label for='cashTendered'>How much cash was tendered by the passengers? </label>";
+        document.getElementById("cashTenderedDiv").innerHTML += "<input id='cashTendered'></input> ";
+        document.getElementById("cashTenderedDiv").innerHTML += "<br/><br/><button id='calcChange' onclick='calcChange()'>Calculate Change</button><br/><br/>";
+        document.getElementById("cashTenderedDiv").style.display = "block";
+    }
+
+    function calcChange()
+    {
+        if (document.getElementById("cashTendered").value == "")
+        {
+            alert("Please type a value for cash tendered by passengers.");
+            return;
+        }
+
+        if (isNaN(document.getElementById("cashTendered").value))
+        {
+            alert("Please type a valid value for cash tendered.");
+            return;
+        }
+
+        var dest = document.getElementById("destination").value;
+        var totalDue = fares[dest] * parseFloat(document.getElementById("numPass").value);
+        var change = parseFloat(document.getElementById("cashTendered").value) - totalDue;
+
+        if (change < 0)
+        {
+            document.getElementById("totalsDiv").innerHTML = "The total due to the driver is <b>R" + totalDue + "</b>. The change for the passengers is <b>R" + (-1*change) + "</b> short.";
+        }
+        else
+        {
+            document.getElementById("totalsDiv").innerHTML = "The total due to the driver is <b>R" + totalDue + "</b>. The change for the passengers is R" + change + ".";
+        }
+
+        document.getElementById("totalsDiv").innerHTML += "<br/><br/><button onclick='reset()'>Reset</button>";
+    }
+
+    function populatePassengers()
+    {
+        str = '<label for=numPass>How many passengers are in the taxi? </label>';
+        str += '<select id="numPass" onchange="passengersSelected()">';
+        for (var i=1; i <= 15; i++)
+        {
+            str += '<option value='+""+i+""+'>'+i+'</option>';
+        }
+        str += '</select><br/><br/>';
+        document.getElementById("taxiFare").innerHTML += str;
+    }
+
+    function reset()
+    {
+        document.getElementById("taxiFare").style.display = 'none';
+        document.getElementById("cashTenderedDiv").style.display = 'none';
+        document.getElementById("totalsDiv").style.display = 'none';
+    }
+</script>
+
+<title>TaxiPay System</title>
+</head>
+
+<body>
+    <div id="section1">
+        <label for="destination">Where is the taxi going?</label>
+        <select id="destination" onchange="destinationSelected()" autofocus>
+            <option value="Nowhere">Nowhere</option>
+            <option value="Randburg">Randburg</option>
+            <option value="Sandton">Sandton</option>
+            <option value="Jeppe">Jeppe</option>
+        </select><br/><br/>
+    </div>
+    <div id="taxiFare"></div>
+    <div id="cashTenderedDiv"></div>
+    <div id="totalsDiv"></div>
+</body>
+
+</html>

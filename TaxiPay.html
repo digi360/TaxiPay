@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<script>
+
+    var taxiFare = 0;
+    var numRows = 0;
+
+    function init()
+    {
+        document.getElementById("section2").style.display= 'none' ;
+    }
+    function contClick()
+    {
+        if (document.getElementById("taxiFare").value == "")
+        {
+            alert("Type a value for the taxi fare.")
+            return;
+        }
+        
+        if (document.getElementById("rowsInTaxi").value == "")
+        {
+            alert("Type a value for the number of rows in the taxi.")
+            return;
+        }
+
+        taxiFare = parseFloat(document.getElementById("taxiFare").value);
+        numRows = parseFloat(document.getElementById("rowsInTaxi").value);
+        
+        document.body.innerHTML += "<br/>The taxi fare is R" + taxiFare + ". There are " + numRows + " rows in the taxi.<br/><br/>"
+        
+        for (var i=1; i <= numRows; i++)
+        {
+            var inputs = 'Row '+i+': <label for="row"'+i+'>How many people are seated on row '+i+'?</label> <input id='+"numPass"+i.toString()+'></input> ';
+            inputs += ' <label for="row"'+i+'>How much cash is tendered from row '+i+'?</label> <input id='+"rowTender"+i.toString()+'></input>';
+            inputs += ' <span id='+"change"+i+'>Change = R</span><br/><br/>';
+            document.body.innerHTML += inputs;
+        }
+
+        document.body.innerHTML += '<input id="btnCalculate" type="button" value="Calculate Change" onclick="calcClick()"></input><br/><br/>';
+        document.body.innerHTML += '<div id="totalDue">The amount for the driver will be displayed here...</div>'
+
+        document.getElementById("section1").style.display= 'none';
+        document.getElementById("section2").style.display= 'block';
+    }
+
+    function calcClick()
+    {
+        var totalPassengers = 0;
+        for (var i=1; i <= numRows; i++)
+        {
+            if (document.getElementById('numPass'+i).value == "")
+            {
+                alert("Enter a value for the number of passengers on row #"+i);
+                return;
+            }
+            else if (document.getElementById('rowTender'+i).value == "")
+            {
+                alert("Enter a value for the amount of cash tendered by row #"+i);
+                return;
+            }
+            else
+            {
+                var numPass = parseFloat(document.getElementById("numPass"+i).value);
+                var tender = parseFloat(document.getElementById("rowTender"+i).value);
+
+                if (countChange(numPass, tender) < 0)
+                {
+                    document.getElementById("totalDue").innerHTML = "The amount given at row #" + i + " is not enough. R" + (-1*countChange(numPass, tender)).toString() + " is short.";
+                    document.getElementById("change"+i).innerHTML = "Change = -R" + (-1*countChange(numPass, tender)).toString();
+                    return;
+                }
+                document.getElementById("change"+i).innerHTML = "Change = R" + countChange(numPass, tender).toString();
+
+                totalPassengers += numPass;
+            }
+        }
+
+        var totalDue = totalPassengers * taxiFare;
+        document.getElementById("totalDue").innerHTML = "The amount owed to the driver is R" + totalDue.toString();
+    }
+
+    function countChange(numPass, tender)
+    {
+        return (tender - (numPass*taxiFare));
+    }
+</script>
+
+<title>TaxiPay System</title>
+</head>
+
+<body onload="init()">
+    <div id="section1">
+        <label for="taxiFare">How much is the taxi fare?</label>
+        <input id="taxiFare"></input><br/><br/>
+        <label for="rowsInTaxi">How many rows are in the taxi</label>
+        <input id="rowsInTaxi"></input><br/><br/>
+        <input id="btnContinue1" type="button" value="Continue" onclick="contClick()"></input>
+    </div>
+</body>
+
+</html>
